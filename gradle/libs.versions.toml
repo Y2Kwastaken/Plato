@@ -1,0 +1,8 @@
+[versions]
+annotations-ver = "1.0.0"
+junit-ver = "5.11.3"
+
+[libraries]
+annotations = { module = "org.jspecify:jspecify", version.ref = "annotations-ver" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit-ver" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
