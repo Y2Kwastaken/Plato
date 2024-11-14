@@ -6,8 +6,10 @@ import sh.miles.plato.ui.pane.AbstractPane;
 import sh.miles.plato.ui.pane.PaneKeys;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import java.awt.Color;
 
 public class Frame extends JFrame {
 
@@ -22,11 +24,17 @@ public class Frame extends JFrame {
         Registries.PANE.forEach((pane) -> {
             pane.associate(this);
             this.add(pane);
+            pane.setVisible(false);
         });
     }
 
     public void show(String key) {
-        Registries.PANE.get(key).ifPresent(AbstractPane::display);
+        Registries.PANE.get(key).ifPresentOrElse(AbstractPane::display, () -> {
+            final JLabel label = new JLabel();
+            label.setText("No Such PaneKey \"" + key + "\" can be found.");
+            label.setForeground(Color.RED);
+            add(label);
+        });
     }
 
     public static void start() {

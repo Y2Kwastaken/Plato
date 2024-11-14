@@ -2,11 +2,13 @@ package sh.miles.plato.util.collection;
 
 import org.jspecify.annotations.NullMarked;
 
+import javax.swing.text.html.Option;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -77,6 +79,29 @@ public final class Registry<K, V extends Registry.Key<K>> implements Iterable<V>
         }
 
         registry.put(key, value);
+    }
+
+    /**
+     * Attempts to get a random element from within the registry
+     *
+     * @return the random element, or an empty optional if this registry has no elements
+     * @throws IllegalStateException if a random number violates the bounds specified, this should not be expected
+     */
+    public Optional<V> random(Random random) throws IllegalStateException {
+        if (this.registry.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final int targetIndex = random.nextInt(0, this.registry.size());
+        int index = 0;
+        for (final V value : registry.values()) {
+            if (targetIndex == index) {
+                return Optional.of(value);
+            }
+            index++;
+        }
+
+        throw new IllegalStateException("An unknown state occurred in which the generated targetIndex is larger than the value list");
     }
 
     @Override

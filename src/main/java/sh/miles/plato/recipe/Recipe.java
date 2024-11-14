@@ -2,13 +2,16 @@ package sh.miles.plato.recipe;
 
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import sh.miles.plato.Registries;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -220,13 +223,33 @@ public record Recipe(UUID uuid, String name, List<Ingredient> ingredients, List<
             return new Recipe(this.uuid, this.name, this.ingredients, this.instructions);
         }
 
-        /**
-         * Creates a new recipe builder
-         *
-         * @return the created recipe builder
-         */
-        public static Builder newBuilder() {
-            return new Builder();
-        }
+    }
+
+    /**
+     * Creates a new recipe builder
+     *
+     * @return the created recipe builder
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    /**
+     * Creates a random recipe
+     *
+     * @return the random recipe
+     */
+    public static Recipe generateRandom() {
+        final Random random = ThreadLocalRandom.current();
+        return new Recipe(
+                UUID.randomUUID(),
+                random.ints(25, 97, 122).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString(),
+                random.ints(random.nextInt(1, 11), 0, 5).mapToObj((i) ->
+                        new Ingredient(
+                                random.ints(random.nextInt(5, 25), 97, 122).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString(),
+                                new int[]{i, 1}, Registries.MEASUREMENT.random(random).orElseThrow())).toList(),
+                random.ints(random.nextInt(0, 5), 0, 1).mapToObj((i) -> random.ints(random.nextInt(100, 150), 97, 122).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString()
+                ).map(Instruction::new).toList()
+        );
     }
 }

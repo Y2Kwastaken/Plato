@@ -12,7 +12,7 @@ import java.util.Objects;
  * @param measurement the measurement of the ingredient
  */
 @NullMarked
-public record Ingredient(int[] quantity, Measurement measurement) {
+public record Ingredient(String name, int[] quantity, Measurement measurement) {
 
     public Ingredient {
         if (quantity.length != 2) {
@@ -48,7 +48,7 @@ public record Ingredient(int[] quantity, Measurement measurement) {
      * @return the kindly formatted string
      */
     public String asKindString(String spacing, boolean shortName) {
-        return quantityAsFractionString() + spacing + (shortName ? measurement.shortName() : measurement.name());
+        return name + spacing + quantityAsFractionString() + spacing + (shortName ? measurement.shortName() : measurement.name()) + "(" + (measurement.pluralization()) + ")";
     }
 
     @Override

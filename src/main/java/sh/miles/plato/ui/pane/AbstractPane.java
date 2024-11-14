@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractPane extends JPanel implements Registry.Key<String
     protected Frame frame;
 
     protected AbstractPane() {
-        super(new GridBagLayout());
+        setLayout(new GridBagLayout());
         this.constraints = new GridBagConstraints();
         setPreferredSize(UIConstants.PREFERRED_SIZE);
         init();
@@ -44,9 +45,23 @@ public abstract class AbstractPane extends JPanel implements Registry.Key<String
      * @param component  the components to put
      * @param adjustment the adjustments to make to global constraints
      */
-    protected final void put(final Component component, Consumer<GridBagConstraints> adjustment) {
-        adjustment.accept((GridBagConstraints) this.constraints.clone());
-        super.add(component, constraints);
+    public final void put(final Component component, Consumer<GridBagConstraints> adjustment) {
+        final GridBagConstraints cloned = (GridBagConstraints) this.constraints.clone();
+        adjustment.accept(cloned);
+        super.add(component, cloned);
+    }
+
+    /**
+     * Puts a component into the pane using the adjust constraints and component
+     *
+     * @param component  the component to put into the frame
+     * @param adjustment the adjustments to make
+     * @param <T>        the type of component
+     */
+    public final <T extends Component> void put(final T component, BiConsumer<GridBagConstraints, T> adjustment) {
+        final GridBagConstraints cloned = (GridBagConstraints) this.constraints.clone();
+        adjustment.accept(cloned, component);
+        super.add(component, cloned);
     }
 
     /**

@@ -8,6 +8,7 @@ repositories {
 
 dependencies {
     implementation(libs.annotations)
+    implementation(libs.flatlaf)
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
 }
